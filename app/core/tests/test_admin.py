@@ -10,7 +10,7 @@ class AdminSiteTest(TestCase):
     """ Tests fro Django admin. """
 
     def setUp(self):
-        """ Cerate user and client. """
+        """ Create user and client. """
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
             email='admin@example.com',
@@ -24,7 +24,7 @@ class AdminSiteTest(TestCase):
             name='Test User'
         )
 
-    def test_user_list(self):
+    def test_users_list(self):
         """ Test that users are listed on page. """
         url = reverse('admin:core_user_changeList')
         res = self.client.get(url)
