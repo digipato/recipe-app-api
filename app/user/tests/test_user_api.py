@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
-CREAT_USER_URL = reverse('user:create')
+CREATE_USER_URL = reverse('user:create')
 
 def create_user(**params):
     """ Create and return new user. """
@@ -27,7 +27,7 @@ class PublicUserApiTests(TestCase):
             'password' : 'testpass123',
             'name': 'Test Name',
         }
-        res = self.client.post(CREAT_USER_URL, payload)
+        res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         user = get_user_model().objects.get(email=payload['email'])
@@ -44,21 +44,22 @@ class PublicUserApiTests(TestCase):
 
         create_user(**payload)
 
-        res = self.client.post(CREAT_USER_URL, payload)
+        res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_password_to_o_short_error(self):
+    def test_password_too_short_error(self):
         payload = {
             'email': 'test@example.com',
             'password': 'pw',
             'name':'Test Name',
         }
 
-        res = self.client.post(CREAT_USER_URL, payload)
+        res = self.client.post(CREATE_USER_URL, payload)
+        print(res)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         user_exists = get_user_model().objects.filter(
             email=payload['email']
-        ).exists
+        ).exists()
         self.assertFalse(user_exists)
