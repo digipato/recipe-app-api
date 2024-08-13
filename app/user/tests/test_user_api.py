@@ -19,7 +19,7 @@ def create_user(**params):
 class PublicUserApiTests(TestCase):
     """  Test the public features of the user API. """
 
-    def setUP(self):
+    def setUp(self):
         self.client = APIClient()
 
     def test_create_user_success(self):
@@ -58,7 +58,6 @@ class PublicUserApiTests(TestCase):
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
-        print(res)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         user_exists = get_user_model().objects.filter(
@@ -136,7 +135,7 @@ class PublicUserApiTests(TestCase):
 class PrivateUserApiTests(TestCase):
     """ Test API requests that require authentication. """
 
-    def setUP(self):
+    def setUp(self):
         self.user = create_user(
             email= 'test@example.com',
             password= 'testpass123',
@@ -152,7 +151,10 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(
             res.data,
-            {'name': self.user.name, 'email': self.user.email}
+            {
+                'name': self.user.name,
+                'email': self.user.email
+            }
         )
 
     def test_post_me_not_allowed(self):
@@ -168,6 +170,6 @@ class PrivateUserApiTests(TestCase):
         res = self.client.patch(ME_URL, payload)
 
         self.user.refresh_from_db()
-        self.assertEqual(self.user.name, payload['name'])
-        self.assertEqual(self.user.check_password(payload['password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.user.name, payload['name'])
+        self.assertTrue(self.user.check_password(payload['password']))
