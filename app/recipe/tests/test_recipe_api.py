@@ -196,21 +196,23 @@ class PrivateRecipeApiTests(TestCase):
 
     def test_create_recipe_with_new_tags(self):
         """ Test creating a recipe with new tags. """
+
         payload = {
             'title': 'Thai Prawn Curry',
             'price': Decimal('2.50'),
             'tags': [
                 {'name': 'Thai'},
                 {'name': 'Dinner'}
-            ]
+            ],
+            'time_minutes': 20,
         }
         res = self.client.post(RECIPES_URL, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        recipe = Recipe.objects.filter(user=self.user)
-        self.assertEqual(recipe.tags.count(), 2)
+        recipes = Recipe.objects.filter(user=self.user)
+        self.assertEqual(recipes.tags.count(), 2)
         for tag in payload['tags']:
-            exists = recipe.tags.filter(
+            exists = recipes.tags.filter(
                     name=tag['name'],
                     user=self.user
                 ).exists()
